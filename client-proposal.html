@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Proposal — Healthcare Appointment Chatbot</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --teal: #0a9396;
+    --teal-dark: #005f73;
+    --cream: #fefae0;
+    --sand: #e9d8a6;
+    --coral: #ca6702;
+    --dark: #1a1a2e;
+    --gray: #6b7280;
+    --light: #f8fafc;
+  }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: #f0f4f8;
+    color: var(--dark);
+    padding: 40px 20px;
+  }
+
+  .page {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.12);
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
+    padding: 48px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    right: 60px; bottom: -80px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .proposal-label {
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 12px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    color: white;
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .header-sub {
+    color: rgba(255,255,255,0.75);
+    font-size: 1rem;
+    font-weight: 300;
+    margin-top: 8px;
+  }
+
+  .header-meta {
+    margin-top: 28px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item label {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 3px;
+  }
+
+  .meta-item span {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  /* Body */
+  .body { padding: 48px 56px; }
+
+  .intro-box {
+    background: var(--cream);
+    border-left: 4px solid var(--coral);
+    padding: 20px 24px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 40px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #374151;
+  }
+
+  section { margin-bottom: 40px; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    color: var(--teal-dark);
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--sand);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title .num {
+    width: 28px; height: 28px;
+    background: var(--teal);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .feature-card {
+    background: var(--light);
+    border-radius: 10px;
+    padding: 16px 18px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .feature-card .icon { font-size: 1.4rem; margin-bottom: 8px; }
+  .feature-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--dark); margin-bottom: 4px; }
+  .feature-card p { font-size: 0.82rem; color: var(--gray); line-height: 1.5; }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .tl-item {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 24px;
+    position: relative;
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: 17px; top: 34px;
+    width: 2px;
+    height: calc(100% - 34px);
+    background: var(--sand);
+  }
+
+  .tl-item:last-child::before { display: none; }
+
+  .tl-dot {
+    width: 34px; height: 34px;
+    background: var(--teal);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 0.8rem; font-weight: 700;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .tl-content h4 { font-weight: 600; font-size: 0.95rem; margin-bottom: 3px; }
+  .tl-content p { font-size: 0.83rem; color: var(--gray); line-height: 1.5; }
+  .tl-week { font-size: 0.72rem; color: var(--teal); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
+
+  .pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .pricing-table th {
+    background: var(--teal-dark);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.5px;
+  }
+
+  .pricing-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e8f0f2;
+    vertical-align: top;
+  }
+
+  .pricing-table tr:nth-child(even) td { background: var(--light); }
+
+  .pricing-table .total-row td {
+    background: var(--cream);
+    font-weight: 700;
+    font-size: 1rem;
+    border-top: 2px solid var(--sand);
+  }
+
+  .price-tag { color: var(--teal-dark); font-weight: 600; }
+
+  .why-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+  .why-list li {
+    display: flex; gap: 12px; align-items: flex-start;
+    font-size: 0.9rem; line-height: 1.6; color: #374151;
+  }
+
+  .why-list li::before {
+    content: '✓';
+    background: var(--teal);
+    color: white;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .cta-box {
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+    border-radius: 14px;
+    padding: 32px 36px;
+    color: white;
+    text-align: center;
+  }
+
+  .cta-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  .cta-box p {
+    font-size: 0.9rem;
+    opacity: 0.85;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .cta-contact {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .contact-item {
+    background: rgba(255,255,255,0.15);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+
+  .footer {
+    background: var(--light);
+    padding: 20px 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+    font-size: 0.78rem;
+    color: var(--gray);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; }
+  }
+
+  @media (max-width: 600px) {
+    .header, .body { padding: 32px 24px; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .header h1 { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="proposal-label">Project Proposal</div>
+    <h1>Healthcare Appointment<br>Booking Chatbot</h1>
+    <div class="header-sub">AI-powered patient experience for your clinic</div>
+    <div class="header-meta">
+      <div class="meta-item"><label>Prepared By</label><span>Your Name Here</span></div>
+      <div class="meta-item"><label>Date</label><span>March 2026</span></div>
+      <div class="meta-item"><label>Valid Until</label><span>April 30, 2026</span></div>
+      <div class="meta-item"><label>Version</label><span>1.0</span></div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- Intro -->
+    <div class="intro-box">
+      Thank you for the opportunity to present this proposal. This document outlines a custom AI chatbot solution designed to automate appointment booking for your clinic — reducing staff workload, eliminating missed calls, and delivering a seamless patient experience 24/7.
+    </div>
+
+    <!-- Problem & Solution -->
+    <section>
+      <div class="section-title"><span class="num">1</span> The Problem We're Solving</div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon">📞</div>
+          <h4>Missed Calls & Bookings</h4>
+          <p>Patients call after hours or during busy periods and can't get through, leading to lost appointments.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">⏰</div>
+          <h4>Staff Time Wasted</h4>
+          <p>Receptionists spend hours each day manually booking, confirming, and rescheduling appointments.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📋</div>
+          <h4>No-Shows & Gaps</h4>
+          <p>Without automated reminders, patients forget appointments — leaving costly gaps in the schedule.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🌙</div>
+          <h4>Zero After-Hours Support</h4>
+          <p>Patients have no way to book or get information outside of clinic hours.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solution -->
+    <section>
+      <div class="section-title"><span class="num">2</span> Proposed Solution</div>
+      <p style="font-size:0.93rem; color:#374151; line-height:1.7; margin-bottom:18px;">
+        A custom AI chatbot embedded on your clinic's website and/or WhatsApp that handles appointment booking end-to-end — from greeting the patient to confirming the slot and sending reminders.
+      </p>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon">💬</div>
+          <h4>Smart Conversational Flow</h4>
+          <p>Guides patients step-by-step to collect name, contact, doctor preference, and time slot.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📅</div>
+          <h4>Live Calendar Integration</h4>
+          <p>Connects to Google Calendar to show real-time availability and block confirmed slots.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">📲</div>
+          <h4>WhatsApp Confirmation</h4>
+          <p>Sends instant booking confirmation and 24-hour reminder via WhatsApp or SMS.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🌐</div>
+          <h4>24/7 Availability</h4>
+          <p>Works around the clock — patients can book at midnight just as easily as at noon.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section>
+      <div class="section-title"><span class="num">3</span> Project Timeline</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot">1</div>
+          <div class="tl-content">
+            <div class="tl-week">Week 1</div>
+            <h4>Discovery & Setup</h4>
+            <p>Understanding your clinic's workflow, doctor schedules, and technical requirements. Setting up the chatbot platform.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">2</div>
+          <div class="tl-content">
+            <div class="tl-week">Week 2</div>
+            <h4>Chatbot Development</h4>
+            <p>Building the conversation flow, integrating Google Calendar, and setting up WhatsApp notifications.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">3</div>
+          <div class="tl-content">
+            <div class="tl-week">Week 3</div>
+            <h4>Testing & Refinement</h4>
+            <p>Internal testing, feedback rounds with your team, and fixing any issues before launch.</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">4</div>
+          <div class="tl-content">
+            <div class="tl-week">Week 4</div>
+            <h4>Launch & Handover</h4>
+            <p>Deploying the bot live on your website/WhatsApp, staff training, and documentation handover.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section>
+      <div class="section-title"><span class="num">4</span> Investment</div>
+      <table class="pricing-table">
+        <thead>
+          <tr>
+            <th>Deliverable</th>
+            <th>Description</th>
+            <th>Price (INR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Chatbot Development</strong></td>
+            <td>Full conversation flow, UI, and logic</td>
+            <td class="price-tag">₹20,000</td>
+          </tr>
+          <tr>
+            <td><strong>Calendar Integration</strong></td>
+            <td>Google Calendar API setup & sync</td>
+            <td class="price-tag">₹8,000</td>
+          </tr>
+          <tr>
+            <td><strong>WhatsApp Notifications</strong></td>
+            <td>Booking confirmation & reminders</td>
+            <td class="price-tag">₹6,000</td>
+          </tr>
+          <tr>
+            <td><strong>Website Embedding</strong></td>
+            <td>Installing chatbot on your website</td>
+            <td class="price-tag">₹3,000</td>
+          </tr>
+          <tr>
+            <td><strong>Training & Docs</strong></td>
+            <td>Staff walkthrough and documentation</td>
+            <td class="price-tag">₹3,000</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="2"><strong>Total Project Cost</strong></td>
+            <td class="price-tag">₹40,000</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px; font-size:0.82rem; color:var(--gray);">
+        💳 Payment terms: 50% upfront, 50% on delivery. Monthly maintenance available at ₹4,000/month.
+      </p>
+    </section>
+
+    <!-- Why Me -->
+    <section>
+      <div class="section-title"><span class="num">5</span> Why Work With Me</div>
+      <ul class="why-list">
+        <li>Dedicated point of contact — you'll work directly with me, not a large agency</li>
+        <li>Built specifically for healthcare — designed with patient privacy and ease of use in mind</li>
+        <li>Local support from Thiruvananthapuram — easy to reach for calls, meetings, or urgent changes</li>
+        <li>Ongoing support — I'm available after launch to fix issues and add features</li>
+        <li>Full ownership — the chatbot and code belong to you at the end of the project</li>
+      </ul>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h3>Ready to Get Started?</h3>
+      <p>Let's schedule a free 30-minute call to discuss your clinic's needs and answer any questions. No commitment required.</p>
+      <div class="cta-contact">
+        <div class="contact-item">📧 your@email.com</div>
+        <div class="contact-item">📱 +91 XXXXX XXXXX</div>
+        <div class="contact-item">💼 LinkedIn: /in/yourname</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <span>© 2026 Your Name — Freelance Tech Services, Thiruvananthapuram, Kerala</span>
+    <span>Confidential — Prepared exclusively for this client</span>
+  </div>
+
+</div>
+</body>
+</html>
